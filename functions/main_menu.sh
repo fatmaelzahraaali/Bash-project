@@ -41,5 +41,3 @@ mainMenu()
 	         mainMenu          #Call it again
        esac
 }
-
-mainMenu
