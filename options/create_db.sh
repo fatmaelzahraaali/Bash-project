@@ -9,11 +9,19 @@ do
   dbName=$(zenity --entry \
   --title="Add new database" \
   --text="Enter database name:" \
-  --entry-text "ITI-DB")
+  --cancel-label="cancel"\
+  --entry-text "DB_name")
+
+# if cancel return to mainMenu 
+  if [[ $? = 1 ]]
+  then
+      mainMenu
+  fi 
+
 
   if [[ -z "$dbName" ]] || [[ ! $dbName =~  ^[a-zA-Z]+[a-zA-Z0-9]*$ ]] 
   then
-      zenity --error --width="300" --text="Database field cannot be empty or start with space or number or special         char"
+      zenity --error --width="300" --text="Database field cannot be empty or start with space or number or special char"
   else
       # check if the database is exit or not
       if isDatabaseExist $dbName
@@ -27,9 +35,8 @@ do
           then
               
               zenity --info --width="200" --text="[$dbName] created successfully"
-              break
-          else
-             
+              break 
+	  else   
               zenity --error --width="200" --text="Error occured during creating the database"   
 
           fi

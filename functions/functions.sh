@@ -44,7 +44,7 @@ mainMenu()
        esac
 }
 
-
+############################### creating db functions #########################
 ### this function checks if the database already exist or not ####
 
 isDatabaseExist()
@@ -66,3 +66,4 @@ createDatabase()
   mkdir ./Database/$1/.metadata
 
 }
+

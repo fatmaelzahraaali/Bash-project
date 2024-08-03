@@ -1,0 +1,14 @@
+
+(zenity:70164): GLib-WARNING **: 02:08:21.153: ../../../glib/giounix.c:414Error while getting flags for FD: Bad file descriptor (9)
+
+(zenity:70217): GLib-WARNING **: 02:08:40.615: ../../../glib/giounix.c:414Error while getting flags for FD: Bad file descriptor (9)
+
+(zenity:71891): GLib-WARNING **: 02:49:25.675: ../../../glib/giounix.c:414Error while getting flags for FD: Bad file descriptor (9)
+
+(zenity:71936): GLib-WARNING **: 02:49:38.702: ../../../glib/giounix.c:414Error while getting flags for FD: Bad file descriptor (9)
+
+(zenity:73267): GLib-WARNING **: 03:19:45.841: ../../../glib/giounix.c:414Error while getting flags for FD: Bad file descriptor (9)
+
+(zenity:73393): GLib-WARNING **: 03:23:54.964: ../../../glib/giounix.c:414Error while getting flags for FD: Bad file descriptor (9)
+
+(zenity:73495): GLib-WARNING **: 03:25:46.324: ../../../glib/giounix.c:414Error while getting flags for FD: Bad file descriptor (9)
