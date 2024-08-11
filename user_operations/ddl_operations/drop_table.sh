@@ -18,5 +18,5 @@ then
     fi
 fi
 
-# Return to main menu
-mainMenu
+
+tableMenu

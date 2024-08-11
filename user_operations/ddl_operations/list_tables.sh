@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Source external functions
-. ././fuctionss/functions.sh
+. ././functions/functions.sh
 
 # List tables and allow user to select one
 table=$(ls -l "Database/${dbName}" | grep "^[-l]" | awk '{print $9}' | \
@@ -10,14 +10,14 @@ table=$(ls -l "Database/${dbName}" | grep "^[-l]" | awk '{print $9}' | \
 
 # Check if the user cancelled the dialog
 if [[ $? -eq 1 ]]; then
-    DatabaseMenu "$dbName"
+    tableMenu "$dbName"
     exit 0
 fi
 
 # Check if a table was selected
 if [[ -z "$table" ]]; then
     zenity --error --width="200" --text="No table selected."
-    DatabaseMenu "$dbName"
+    tableMenu "$dbName"
     exit 1
 fi
 

@@ -3,7 +3,7 @@
 . ./functions/functions.sh
 
 
-askForDatabaseCred
+listDatabases
 
   if [[ $exitCode == 1 ]]
     then
@@ -11,4 +11,4 @@ askForDatabaseCred
         exit
     fi
 
-DatabaseMenu $dbName
+tableMenu $dbName
