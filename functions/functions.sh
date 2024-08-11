@@ -1,6 +1,6 @@
 #!/bin/bash
 
-
+RED='\033[1;31m'	          # Red Color code 
 Green='\033[1;32m'	        # Green Color Green
 ColorReset='\033[0m' 		    # No Color Code
 
@@ -67,15 +67,15 @@ createDatabase()
 askForDatabaseCred() 
 {
     # Check if DBMS is installed
-    installed=$(printenv DBMS_INSTALLED)
+#    installed=$(printenv DBMS_INSTALLED)
     dbUser=$(printenv DB_USER)
     dbPass=$(printenv DB_PASS)
     
-    if [[ -z "$installed" ]];
-    then
-        zenity --error --width="230" --text="Database Management System is not installed."
-        exit 1
-    fi
+ #   if [[ -z "$installed" ]];
+ #   then
+ #       zenity --error --width="230" --text="Database Management System is not installed."
+#        exit 1
+ #   fi
 
     while true;
     do
@@ -102,7 +102,7 @@ askForDatabaseCred()
     while true;
     do
         # List available databases and prompt user to select one
-        dbName=$(ls -l Database | grep "^d" | awk '{print $9}' | zenity --cancel-label="Back" --list --height="250" --width="300" --title="Database List" --text="Select your database" --column="Database name")
+        dbName=$(ls -l Database | grep "^d" | awk '{print $9}' | zenity --cancel-label="Back" --list --height="450" --width="350" --title="Database List" --text="Select your database" --column="Database name")
         
         lastOp=$?
         if [[ $lastOp == 1 ]];
@@ -127,7 +127,7 @@ askForDatabaseCred()
 
 DatabaseMenu(){
   choice=$(zenity --list \
-  --height="250"\
+  --height="450"\
   --width="350"\
   --cancel-label="Back" \
   --title="Database $1 Menu" \
@@ -149,4 +149,162 @@ DatabaseMenu(){
             "Exit") echo -e "${Green}Exited..${ColorReset}";exit;; #exit from database
             *) echo -e "${RED}invalid choice, try again ... you must choose only from the above list${ColorReset}";mainMenu #Call it again
     esac
+}
+
+
+tableMenu()
+{
+
+  choice=$(zenity --list \
+  --height="450"\
+  --width="350"\
+  --cancel-label="Back" \
+  --title="Table $2 Menu" \
+  --column="Option" \
+     "Drop Table [$2]" \
+     "Insert Into Table [$2]" \
+     "Select From Table [$2]" \
+     "Delete From Table [$2]" \
+     "Update Table [$2]" \
+     "Main Menu" \
+     "Exit")
+
+        if [ $? -eq 1 ]
+        then
+            DatabaseMenu $dbName
+        fi
+
+case $choice in
+    "Drop Table [$2]"). ./user_operations/ddl-operations/drop_table.sh $1 $2;;
+    "Insert Into Table [$2]"). ./user_operations/dml-operations/insert_into_table.sh $1 $2;;
+    "Select From Table [$2]"). ./user_operations/dml-operations/select_from_table.sh $1 $2;;
+    "Delete From Table [$2]"). ./user_operations/dml-operations/delete_from_table.sh $1 $2;;
+    "Update Table [$2]"). ./user_operations/dml-operations/update_table.sh $1 $2;;
+    "Main Menu") mainMenu;;
+    "Exit") echo -e "${Green}Exited..${ColorReset}";exit;; #exit from database
+    *) echo -e "${RED}invalid choice, try again ... you must choose only from the above list${ColorReset}"; mainMenu          #Call it again
+esac
+
+}
+
+createColumns(){
+  while true;
+    do
+      column=$(zenity --entry \
+      --title="Enter the number of columns" \
+      --cancel-label="Back" \
+      --text="Enter the number of columns:" \
+      --entry-text "number-column")
+
+ if [[ $column =~ ^[0-9]+$ ]];
+  then
+     
+    for (( i = 1 ; i <= $column ; i++ ));
+    do
+        while true;
+        do
+        tablename=$(zenity --entry \
+        --title="Enter column name" \
+        --cancel-label="Back" \
+        --text="Enter column name:" \
+        --entry-text "Column-name")
+         
+	if [[ $? -eq 1 ]]; then
+             DatabaseMenu $dbName
+           return
+         fi
+        if [[ -z "$tablename" ]] || [[ ! $tablename =~  ^[a-zA-Z]+[a-zA-Z0-9]*$ ]] 
+        then
+            zenity --error --width="300" --text="column field cannot be empty or start with space or number or special char"
+        else
+            break
+        fi
+        done
+        tablekind=$(zenity --list \
+        --height="250"\
+        --width="350"\
+        --cancel-label="Exit" \
+        --title="$tablename Kind" \
+        --column="Option" \
+            "Integer" \
+            "String" )
+
+          if (( $i == $column ));
+          then
+              echo -e "$tablename;$tablekind" >> $2
+              zenity --info --width="200" --text="[$tablename] created succefully"
+              mainMenu
+          elif (( $i < $column ));
+          then
+              echo -e "$tablename;$tablekind" >> $2 
+          fi
+      done
+      else
+           zenity --error --width="300" --text="column number cannot be empty or start with space or number or special char"
+      fi
+  done
+}
+
+createtable()
+{
+    touch Database/$dbName/$1
+    touch Database/$dbName/.metadata/$1.meta
+    createColumns Database/$dbName/$1 Database/$dbName/.metadata/$1.meta
+}
+
+isTableExist()
+{
+  if [ -f ./Database/$dbName/$1 ]
+  then
+    # 0 = true
+    return 0 
+  else
+    # 1 = false
+    return 1
+  fi
+  
+}
+
+table()
+{
+
+
+while true
+do
+  tablename=$(zenity --entry \
+    --title="Add new table" \
+    --cancel-label="Back" \
+    --text="Enter table name:" \
+    --entry-text "table-name")
+   if [ $? -eq 1]
+   then
+	   DatabaseMenu $dbName
+   fi   
+
+  if [[ -z "$tablename" ]] || [[ ! $tablename =~  ^[a-zA-Z]+[a-zA-Z0-9]*$ ]]
+  then
+      zenity --error --width="300" --text="Table field cannot be empty or start with space or number or special char"
+  else
+      # check if the Table is exit or not
+      if isTableExist $tablename
+      then
+          zenity --error --width="200" --text="[$tablename] is already exist"
+      else
+          createtable $tablename
+
+          # check if last command is Done
+          if [ $? -eq 0 ]
+          then
+              
+              zenity --info --width="200" --text="[$tablename] created succefully"
+              break
+          else
+            
+              zenity --error --width="200" --text="Error occured during creating the table"
+
+          fi
+
+        fi
+      fi
+done
 }
