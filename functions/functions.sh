@@ -102,10 +102,6 @@ tableMenu()
      "create Table [$2]" \
      "Drop Table [$2]" \
      "list Tables [$2]" \
-     "Insert into Table [$2]" \
-     "Select From Table [$2]" \
-     "Delete From Table [$2]" \
-     "Update Table [$2]" \
      "Main Menu" \
      "Exit")
 
@@ -229,8 +225,8 @@ table()
       tableMenu $dbName
    fi   
 
-  if [[ -z "$tablename" ]] || [[ ! $tablename =~  ^[a-zA-Z]+[a-zA-Z0-9]*$ ]]
-  then
+   if [[ -z "$tablename" ]] || [[ ! $tablename =~  ^[a-zA-Z]+[a-zA-Z0-9]*$ ]]
+   then
       zenity --error --width="300" --text="Table field cannot be empty or start with space or number or special char"
   else
       # check if the Table is exit or not
